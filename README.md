@@ -26,7 +26,6 @@
     - [7.2. Test Web App](#72-test-web-app)
     - [7.3. Debugging (Bí kíp)](#73-debugging-bí-kíp)
   - [8. Phần 6: Triển khai lên Production (Vercel)](#8-phần-6-triển-khai-lên-production-vercel)
-  - [9. Troubleshooting (Gỡ lỗi thường gặp)](#9-troubleshooting-gỡ-lỗi-thường-gặp)
 
 ---
 
@@ -110,12 +109,23 @@ anti-scam-app/
 ├── .env.local             # Chứa biến môi trường (LIFF ID)
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx     # Layout gốc
-│   │   ├── page.tsx       # Logic chính của Game
-│   │   └── globals.css    # Tailwind directives
-│   ├── components/        # (Optional) Tách nhỏ UI nếu cần
-│   └── data/              # Dữ liệu câu hỏi
-│       └── scenarios.ts   
+│   │   └── page.tsx                    # Component chính
+│   ├── components/
+│   │   ├── screens/
+│   │   │   ├── IntroScreen.tsx         # Màn hình giới thiệu
+│   │   │   └── ResultScreen.tsx        # Màn hình kết quả
+│   │   ├── DraggableCard.tsx          # Card kéo thả
+│   │   ├── FeedbackCard.tsx           # Card phản hồi
+│   │   ├── GameHeader.tsx             # Header game
+│   │   ├── RadarChart.tsx             # Biểu đồ radar
+│   │   └── ScenarioIcon.tsx           # Icon scenario
+│   ├── constants/
+│   │   └── gameConfig.ts              # Config và constants
+│   ├── types/
+│   │   └── game.ts                    # TypeScript interfaces
+│   └── utils/
+│       ├── gameUtils.ts               # Utils tính toán game
+│       └── certificateUtils.ts        # Utils xử lý chứng chỉ
 └── package.json
 ```
 
@@ -259,16 +269,3 @@ Ngrok chỉ dùng để test tạm thời. Để chạy chính thức miễn ph�
 5.  Nhấn **Deploy**.
 6.  Sau khi deploy xong, Vercel sẽ cấp domain (ví dụ: `https://anti-scam.vercel.app`).
 7.  **Quan trọng:** Quay lại LINE Developers Console -> Sửa **Endpoint URL** thành domain Vercel mới này.
-
----
-
-## 9. Troubleshooting (Gỡ lỗi thường gặp)
-
-| Lỗi | Nguyên nhân | Cách khắc phục |
-| :--- | :--- | :--- |
-| **LIFF init failed** | Sai LIFF ID hoặc Endpoint chưa update | Check lại file `.env.local` và Endpoint trong Console xem khớp chưa. |
-| **Trắng trang trên iOS** | Lỗi CSS hoặc JS crash | Dùng Safari Web Inspector (Phần 7.3) để xem Console log. |
-| **Invalid redirect_uri** | Ngrok đổi link mới nhưng chưa update Console | Mỗi lần tắt Ngrok bật lại link sẽ đổi. Nhớ update lại Endpoint URL trong LINE Console. |
-| **Không scroll được** | Xung đột với sự kiện Swipe | Đã thêm `overflow-hidden` vào body để chặn scroll mặc định của trình duyệt, giúp trải nghiệm swipe tốt hơn. |
-
----
