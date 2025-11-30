@@ -67,7 +67,7 @@ export const DraggableCard = ({
       {...handlers}>
       <div
         ref={cardRef}
-        className={`w-full h-full bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden select-none absolute top-0 left-0 flex flex-col ${
+        className={`w-full h-full bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-2xl border-2 border-slate-200 overflow-hidden select-none absolute top-0 left-0 flex flex-col ${
           !data.interactive ? 'cursor-grab active:cursor-grabbing' : ''
         }`}
         style={{
@@ -76,36 +76,41 @@ export const DraggableCard = ({
         }}>
         {!data.interactive && (
           <>
+            {/* Trust overlay - Enhanced */}
             <div
-              className="absolute top-6 left-6 border-4 border-green-500 text-green-500 font-black px-4 py-2 rounded-lg text-3xl z-10 transform -rotate-12 bg-white/50 backdrop-blur-sm"
+              className="absolute top-6 left-6 border-4 border-green-500 text-green-500 font-black px-6 py-3 rounded-2xl text-3xl z-10 transform -rotate-12 bg-green-50/90 backdrop-blur-md shadow-xl"
               style={{ opacity: opacityRight }}>
-              TIN
+              ✓ TIN
             </div>
+            {/* Scam overlay - Enhanced */}
             <div
-              className="absolute top-6 right-6 border-4 border-red-500 text-red-500 font-black px-4 py-2 rounded-lg text-3xl z-10 transform rotate-12 bg-white/50 backdrop-blur-sm"
+              className="absolute top-6 right-6 border-4 border-red-500 text-red-500 font-black px-6 py-3 rounded-2xl text-3xl z-10 transform rotate-12 bg-red-50/90 backdrop-blur-md shadow-xl"
               style={{ opacity: opacityLeft }}>
-              LỪA
+              ✗ LỪA
             </div>
           </>
         )}
 
         <div className="flex-1 p-6 flex flex-col items-center overflow-y-auto custom-scrollbar">
-          {/* Header */}
+          {/* Header - Enhanced */}
           <div className="w-full flex flex-col items-center mb-6 shrink-0">
-            <div className="mt-2 mb-3">
-              <ScenarioIcon type={data.type} />
+            <div className="mt-2 mb-4 relative">
+              <div className="absolute inset-0 bg-blue-400/20 blur-xl rounded-full"></div>
+              <div className="relative">
+                <ScenarioIcon type={data.type} />
+              </div>
             </div>
-            <div className="w-full flex justify-center mb-2">
+            <div className="w-full flex justify-center mb-3">
               <span
-                className={`text-xs font-bold px-2 py-1 rounded uppercase ${
+                className={`text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wide shadow-md ${
                   data.difficulty === 'hard'
-                    ? 'bg-red-100 text-red-600'
-                    : 'bg-blue-100 text-blue-600'
+                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white'
+                    : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
                 }`}>
-                Độ khó: {data.difficulty}
+                {data.difficulty === 'hard' ? 'Khó' : 'Dễ'}
               </span>
             </div>
-            <h2 className="text-2xl font-bold text-slate-800 text-center leading-tight">
+            <h2 className="text-2xl font-bold text-slate-900 text-center leading-tight px-2">
               {data.title}
             </h2>
           </div>
@@ -141,27 +146,30 @@ export const DraggableCard = ({
             )}
           </div>
 
-          {/* Buttons */}
+          {/* Buttons - Enhanced */}
           {data.interactive && (
             <div className="w-full space-y-3 animate-in fade-in slide-in-from-bottom-4 shrink-0 pb-2">
-              <p className="text-center text-sm font-bold text-slate-400 mb-2">
-                Bạn sẽ làm gì?
+              <p className="text-center text-sm font-black text-slate-600 mb-3 uppercase tracking-wide">
+                🤔 Bạn sẽ làm gì?
               </p>
               {data.options?.map((opt, idx) => (
                 <button
                   key={idx}
                   onClick={() => onSwipe(opt.action)}
-                  className="w-full py-3 rounded-xl font-bold text-white shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700">
-                  {opt.label}
+                  className="group relative w-full py-4 rounded-2xl font-bold text-white shadow-xl transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  <span className="relative text-base">{opt.label}</span>
                 </button>
               ))}
             </div>
           )}
 
           {!data.interactive && (
-            <div className="mt-auto text-center shrink-0">
-              <p className="text-slate-400 text-sm italic">
+            <div className="mt-auto text-center shrink-0 bg-slate-100 py-3 px-4 rounded-xl">
+              <p className="text-slate-600 text-sm font-medium flex items-center justify-center gap-2">
+                <span className="animate-pulse">👆</span>
                 Kéo thẻ để quyết định
+                <span className="animate-pulse">👆</span>
               </p>
             </div>
           )}

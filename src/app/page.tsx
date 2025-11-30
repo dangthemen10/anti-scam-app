@@ -6,11 +6,14 @@ import { ORIGINAL_SCENARIOS } from '@/constants/scenarios';
 import { shuffleArray, calculateStats } from '@/utils/gameUtils';
 import { IntroScreen } from '@/components/screens/IntroScreen';
 import { ResultScreen } from '@/components/screens/ResultScreen';
+import { MultiplayerMenu } from '@/components/screens/MultiplayerMenu';
+import { LobbyScreen } from '@/components/screens/LobbyScreen';
 import { GameHeader } from '@/components/GameHeader';
 import { DraggableCard } from '@/components/DraggableCard';
 import { FeedbackCard } from '@/components/FeedbackCard';
-import { GameState, UserAnswer, Scenario, Feedback } from '@/types/game';
+import { GameState, UserAnswer, Scenario, Feedback, BattleRoom, Player } from '@/types/game';
 import { GAME_STATES } from '@/constants/gameConfig';
+import { createRoom, joinRoom, generatePlayerId, roomStorage } from '@/utils/multiplayerUtils';
 // import liff from '@line/liff';
 
 export default function AntiScamApp() {
@@ -23,6 +26,10 @@ export default function AntiScamApp() {
   const [startTime, setStartTime] = useState(0);
   const [lastFeedback, setLastFeedback] = useState<Feedback | null>(null);
   const [streak, setStreak] = useState(0);
+
+  // Multiplayer state
+  const [battleRoom, setBattleRoom] = useState<BattleRoom | null>(null);
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
   // useEffect(() => {
   //   liff.init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID || '' }).then(() => {
@@ -43,6 +50,93 @@ export default function AntiScamApp() {
     setStreak(0);
     setGameState(GAME_STATES.PLAYING);
     setStartTime(Date.now());
+  };
+
+  // Multiplayer functions
+  const openMultiplayer = () => {
+    if (!userName.trim()) return alert('Hãy nhập tên chiến binh trước!');
+    setGameState(GAME_STATES.MULTIPLAYER);
+  };
+
+  const createBattleRoom = () => {
+    const shuffled = shuffleArray(ORIGINAL_SCENARIOS).map(s => ({
+      ...s,
+      id: String(s.id),
+      difficulty: s.difficulty as 'easy' | 'hard',
+    })) as Scenario[];
+    const room = createRoom(userName, shuffled);
+    const host = room.players[0];
+    
+    setBattleRoom(room);
+    setCurrentPlayer(host);
+    roomStorage.saveRoom(room);
+    setGameState(GAME_STATES.LOBBY);
+  };
+
+  const joinBattleRoom = (roomCode: string) => {
+    const room = roomStorage.getRoom(roomCode);
+    
+    if (!room) {
+      alert('Không tìm thấy phòng! Kiểm tra lại mã phòng.');
+      return;
+    }
+
+    if (room.players.length >= 2) {
+      alert('Phòng đã đầy!');
+      return;
+    }
+
+    const player = joinRoom(roomCode, userName);
+    room.players.push(player);
+    
+    setBattleRoom(room);
+    setCurrentPlayer(player);
+    roomStorage.saveRoom(room);
+    setGameState(GAME_STATES.LOBBY);
+  };
+
+  const handlePlayerReady = () => {
+    if (!battleRoom || !currentPlayer) return;
+    
+    const updatedPlayer = { ...currentPlayer, isReady: true };
+    const updatedRoom = {
+      ...battleRoom,
+      players: battleRoom.players.map(p => 
+        p.id === currentPlayer.id ? updatedPlayer : p
+      ),
+    };
+    
+    setCurrentPlayer(updatedPlayer);
+    setBattleRoom(updatedRoom);
+    roomStorage.saveRoom(updatedRoom);
+  };
+
+  const startBattle = () => {
+    if (!battleRoom) return;
+    
+    const updatedRoom = {
+      ...battleRoom,
+      status: 'playing' as const,
+      startedAt: Date.now(),
+    };
+    
+    setBattleRoom(updatedRoom);
+    setScenarios(battleRoom.scenarios);
+    setCurrentIndex(0);
+    setUserAnswers([]);
+    setStreak(0);
+    setGameState(GAME_STATES.BATTLE);
+    setStartTime(Date.now());
+    roomStorage.saveRoom(updatedRoom);
+  };
+
+  const leaveBattleRoom = () => {
+    if (battleRoom) {
+      roomStorage.deleteRoom(battleRoom.id);
+    }
+    setBattleRoom(null);
+    setCurrentPlayer(null);
+    setGameState(GAME_STATES.INTRO);
   };
 
   // Go Home
@@ -141,6 +235,30 @@ export default function AntiScamApp() {
         userName={userName}
         setUserName={setUserName}
         onStart={startGame}
+        onMultiplayer={openMultiplayer}
+      />
+    );
+  }
+
+  if (gameState === GAME_STATES.MULTIPLAYER) {
+    return (
+      <MultiplayerMenu
+        userName={userName}
+        onCreateRoom={createBattleRoom}
+        onJoinRoom={joinBattleRoom}
+        onBack={() => setGameState(GAME_STATES.INTRO)}
+      />
+    );
+  }
+
+  if (gameState === GAME_STATES.LOBBY && battleRoom && currentPlayer) {
+    return (
+      <LobbyScreen
+        room={battleRoom}
+        currentPlayer={currentPlayer}
+        onReady={handlePlayerReady}
+        onStart={startBattle}
+        onLeave={leaveBattleRoom}
       />
     );
   }

@@ -12,6 +12,10 @@ export const GAME_STATES = {
   PLAYING: 'playing',
   FEEDBACK: 'feedback',
   RESULT: 'result',
+  MULTIPLAYER: 'multiplayer',
+  LOBBY: 'lobby',
+  BATTLE: 'battle',
+  BATTLE_RESULT: 'battle-result',
 } as const;
 
 export const DIFFICULTY_LEVELS = {
