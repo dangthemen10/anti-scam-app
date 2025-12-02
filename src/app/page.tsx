@@ -180,12 +180,12 @@ export default function AntiScamApp() {
           <FeedbackCard feedback={lastFeedback} onNext={nextCard} />
         )}
         {gameState === GAME_STATES.PLAYING && !currentCard.interactive && (
-          <div className="absolute bottom-4 sm:bottom-6 flex w-full max-w-sm justify-between px-4 text-white text-[10px] sm:text-xs font-medium opacity-40 pointer-events-none">
+          <div className="absolute bottom-6 flex w-full max-w-sm justify-between px-4 text-white text-[10px] sm:text-xs font-medium opacity-40 pointer-events-none">
             <div className="flex items-center gap-1 text-red-400">
-              <XCircle size={14} /> Trái: Lừa Đảo
+              <XCircle size={16} /> Kéo Trái: Lừa Đảo
             </div>
             <div className="flex items-center gap-1 text-green-400">
-              Phải: An Toàn <CheckCircle size={14} />
+              Kéo Phải: An Toàn <CheckCircle size={16} />
             </div>
           </div>
         )}
