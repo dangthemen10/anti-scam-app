@@ -6,7 +6,7 @@ interface IntroScreenProps {
   onStart: () => void;
 }
 
-export const IntroScreen= ({
+export const IntroScreen = ({
   userName,
   setUserName,
   onStart,

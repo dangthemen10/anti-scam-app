@@ -35,6 +35,7 @@ export interface GameStats {
 }
 
 export interface Feedback {
+  scenario: any
   correct: boolean;
   details: string;
   explanation: string;

@@ -28,8 +28,7 @@ export const RadarChart = ({ stats }: RadarChartProps): React.JSX.Element => {
   ].map((val, i) => getPoint(val, i));
 
   const pathData =
-    points.map((p, i) => (i === 0 ? 'M' : 'L') + `${p.x},${p.y}`).join(' ') +
-    'Z';
+    points.map((p, i) => (i === 0 ? 'M' : 'L') + `${p.x},${p.y}`).join(' ') + 'Z';
 
   const labels = [
     'Kiến thức',
