@@ -93,22 +93,37 @@ export const ResultScreen = ({
               <span className="text-slate-400 text-xs uppercase tracking-widest">
                 Điểm Tổng Kết
               </span>
-              <div className="text-4xl font-black text-white">
+              <div
+                className={`text-4xl font-black ${stats.totalScore10 >= 9.5
+                  ? 'text-yellow-400 animate-pulse drop-shadow-[0_0_15px_rgba(250,204,21,0.8)]'
+                  : stats.totalScore10 >= 8.5
+                    ? 'text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.6)]'
+                    : stats.totalScore10 >= 7
+                      ? 'text-green-400'
+                      : stats.totalScore10 >= 5.5
+                        ? 'text-blue-400'
+                        : 'text-red-400'
+                  }`}>
                 {stats.totalScore10.toFixed(1)}/10
               </div>
+              {stats.totalScore10 >= 9.5 && (
+                <div className="text-yellow-400 text-sm font-bold mt-1 animate-bounce">
+                  ⭐ HUYỀN THOẠI ⭐
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-800/50 rounded-xl p-5 mb-8 border-l-4 border-blue-500">
-          <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-            <Info size={20} className="text-blue-500" /> Đánh giá từ chuyên gia
+        <div className="bg-gradient-to-br from-blue-900/30 via-purple-900/20 to-slate-800/50 rounded-xl p-6 mb-8 border-l-4 border-blue-500 shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <h3 className="font-bold text-xl mb-4 flex items-center gap-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <Info size={22} className="text-blue-400 animate-pulse" /> Đánh giá từ chuyên gia
           </h3>
-          <ul className="list-disc list-inside space-y-2 text-slate-300">
-            {getSuggestions(stats).map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
-          </ul>
+          <div className="bg-slate-800/60 rounded-lg p-4 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 animate-in fade-in slide-in-from-left duration-500">
+            <p className="text-slate-100 leading-relaxed text-base font-medium">
+              {getSuggestions(stats)[0]}
+            </p>
+          </div>
         </div>
 
         <div className="space-y-3">
